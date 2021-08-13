@@ -11,8 +11,8 @@ class StocksEnv(TradingEnv):
         self.frame_bound = frame_bound
         super().__init__(df, window_size)
 
-        self.trade_fee_bid_percent = 0.01  # unit
-        self.trade_fee_ask_percent = 0.005  # unit
+        self.trade_fee_bid_percent = 0.1 / 100  # unit
+        self.trade_fee_ask_percent = 0.1 / 100  # unit
 
 
     def _process_data(self):
@@ -37,11 +37,14 @@ class StocksEnv(TradingEnv):
 
         if trade:
             current_price = self.prices[self._current_tick]
-            last_trade_price = self.prices[self._last_trade_tick]
+            last_trade_price = self.prices[self._last_trade_tick] * (1 + np.random.uniform(low=-0.001, high=0.001))
             price_diff = current_price - last_trade_price
 
             if self._position == Positions.Long:
                 step_reward += price_diff
+            if self._position == Positions.Short:
+                step_reward -= price_diff
+
 
         return step_reward
 
@@ -54,11 +57,14 @@ class StocksEnv(TradingEnv):
 
         if trade or self._done:
             current_price = self.prices[self._current_tick]
-            last_trade_price = self.prices[self._last_trade_tick]
+            last_trade_price = self.prices[self._last_trade_tick] * (1 + np.random.uniform(low=-0.001, high=0.001))
 
             if self._position == Positions.Long:
                 shares = (self._total_profit * (1 - self.trade_fee_ask_percent)) / last_trade_price
                 self._total_profit = (shares * (1 - self.trade_fee_bid_percent)) * current_price
+            if self._position == Positions.Short:
+                shares = (self._total_profit * (1 - self.trade_fee_bid_percent)) / current_price
+                self._total_profit = (shares * (1 - self.trade_fee_ask_percent)) * last_trade_price
 
 
     def max_possible_profit(self):
@@ -84,6 +90,12 @@ class StocksEnv(TradingEnv):
                 last_trade_price = self.prices[last_trade_tick]
                 shares = profit / last_trade_price
                 profit = shares * current_price
+            last_trade_tick = current_tick - 1
+            if position == Positions.Short:
+                current_price = self.prices[current_tick - 1]
+                last_trade_price = self.prices[self.last_trade_tick] 
+                shares = profit / current_price
+                profit = shares * last_trade_price
             last_trade_tick = current_tick - 1
 
         return profit
