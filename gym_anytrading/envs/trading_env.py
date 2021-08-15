@@ -62,7 +62,7 @@ class TradingEnv(gym.Env):
         self._position = Positions.Short
         self._position_history = (self.window_size * [None]) + [self._position]
         self._total_reward = 0
-        self._total_profit = 1  # unit
+        self._total_profit = 1000  # unit
         self._first_rendering = True
         self.history = {}
         return self._get_observation()
@@ -93,7 +93,7 @@ class TradingEnv(gym.Env):
         observation = self._get_observation()
         info = dict(
             total_reward = self._total_reward,
-            total_profit = self._total_profit,
+            net_worth = self._total_profit,
             position = self._position.value
         )
         self._update_history(info)
@@ -135,7 +135,7 @@ class TradingEnv(gym.Env):
 
         plt.suptitle(
             "Total Reward: %.6f" % self._total_reward + ' ~ ' +
-            "Total Profit: %.6f" % self._total_profit
+            "Net Worth: %.6f" % self._total_profit
         )
 
         plt.pause(0.01)
@@ -158,7 +158,7 @@ class TradingEnv(gym.Env):
 
         plt.suptitle(
             "Total Reward: %.6f" % self._total_reward + ' ~ ' +
-            "Total Profit: %.6f" % self._total_profit
+            "Net Worth: %.6f" % self._total_profit
         )
         
         
