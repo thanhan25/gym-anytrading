@@ -33,13 +33,13 @@ class StocksEnv(TradingEnv):
         trade = False
         if action == Actions.Buy.value and self._position == Positions.Long:
             current_price = self.prices[self._current_tick]
-            last_trade_price = self.prices[self._last_trade_tick] * (1 + np.random.uniform(low=-0.001, high=0.001))
+            last_trade_price = self.prices[self._last_trade_tick] * (1 + np.random.uniform(low=-0.0005, high=0.0005))
             price_diff = current_price - last_trade_price
             step_reward += price_diff
 
         if action == Actions.Sell.value and self._position == Positions.Short:
             current_price = self.prices[self._current_tick]
-            last_trade_price = self.prices[self._last_trade_tick] * (1 + np.random.uniform(low=-0.001, high=0.0005))
+            last_trade_price = self.prices[self._last_trade_tick] * (1 + np.random.uniform(low=-0.0005, high=0.0005))
             price_diff = current_price - last_trade_price
             step_reward -= price_diff        
 
@@ -49,7 +49,7 @@ class StocksEnv(TradingEnv):
 
         if trade:
             current_price = self.prices[self._current_tick]
-            last_trade_price = self.prices[self._last_trade_tick] * (1 + np.random.uniform(low=-0.001, high=0.0005))
+            last_trade_price = self.prices[self._last_trade_tick] * (1 + np.random.uniform(low=-0.0005, high=0.0005))
             price_diff = current_price - last_trade_price
 
             if self._position == Positions.Long:
@@ -63,13 +63,13 @@ class StocksEnv(TradingEnv):
 
         if action == Actions.Buy.value and self._position == Positions.Long:
             current_price = self.prices[self._current_tick]
-            last_trade_price = self.prices[self._last_trade_tick] * (1 + np.random.uniform(low=-0.001, high=0.001))    
+            last_trade_price = self.prices[self._last_trade_tick] * (1 + np.random.uniform(low=-0.0005, high=0.0005))    
             shares = round((self._total_profit * (1 - self.trade_fee_ask_percent)) / last_trade_price, 3)
             self._total_profit = (shares * (1 - self.trade_fee_bid_percent)) * current_price             
        
         if action == Actions.Sell.value and self._position == Positions.Short:
             current_price = self.prices[self._current_tick]
-            last_trade_price = self.prices[self._last_trade_tick] * (1 + np.random.uniform(low=-0.001, high=0.001))    
+            last_trade_price = self.prices[self._last_trade_tick] * (1 + np.random.uniform(low=-0.0005, high=0.0005))    
             shares = round((self._total_profit * (1 - self.trade_fee_ask_percent)) / current_price, 3)
             self._total_profit = (shares * (1 - self.trade_fee_bid_percent)) * last_trade_price  
         
@@ -80,7 +80,7 @@ class StocksEnv(TradingEnv):
 
         if trade or self._done:
             current_price = self.prices[self._current_tick]
-            last_trade_price = self.prices[self._last_trade_tick] * (1 + np.random.uniform(low=-0.001, high=0.001))
+            last_trade_price = self.prices[self._last_trade_tick] * (1 + np.random.uniform(low=-0.0005, high=0.0005))
 
             if self._position == Positions.Long:
                 shares = round((self._total_profit * (1 - self.trade_fee_ask_percent)) / last_trade_price, 3)
