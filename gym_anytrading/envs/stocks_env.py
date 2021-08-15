@@ -29,8 +29,20 @@ class StocksEnv(TradingEnv):
 
     def _calculate_reward(self, action):
         step_reward = 0
-
+        
         trade = False
+        if action == Actions.Buy.value and self._position == Positions.Long:
+            current_price = self.prices[self._current_tick]
+            last_trade_price = self.prices[self._last_trade_tick] * (1 + np.random.uniform(low=-0.001, high=0.001))
+            price_diff = current_price - last_trade_price
+            step_reward += price_diff
+
+        if action == Actions.Sell.value and self._position == Positions.Short:
+            current_price = self.prices[self._current_tick]
+            last_trade_price = self.prices[self._last_trade_tick] * (1 + np.random.uniform(low=-0.001, high=0.001))
+            price_diff = current_price - last_trade_price
+            step_reward -= price_diff        
+
         if ((action == Actions.Buy.value and self._position == Positions.Short) or
             (action == Actions.Sell.value and self._position == Positions.Long)):
             trade = True
@@ -44,12 +56,23 @@ class StocksEnv(TradingEnv):
                 step_reward += price_diff
             if self._position == Positions.Short:
                 step_reward -= price_diff
-
-
         return step_reward
 
 
     def _update_profit(self, action):
+
+        if action == Actions.Buy.value and self._position == Positions.Long:
+            current_price = self.prices[self._current_tick]
+            last_trade_price = self.prices[self._last_trade_tick] * (1 + np.random.uniform(low=-0.001, high=0.001))    
+            shares = (self._total_profit * (1 - self.trade_fee_ask_percent)) / last_trade_price
+            self._total_profit = (shares * (1 - self.trade_fee_bid_percent)) * current_price             
+       
+        if action == Actions.Sell.value and self._position == Positions.Short:
+            current_price = self.prices[self._current_tick]
+            last_trade_price = self.prices[self._last_trade_tick] * (1 + np.random.uniform(low=-0.001, high=0.001))    
+            shares = (self._total_profit * (1 - self.trade_fee_ask_percent)) / current_price
+            self._total_profit = (shares * (1 - self.trade_fee_bid_percent)) * last_trade_price  
+        
         trade = False
         if ((action == Actions.Buy.value and self._position == Positions.Short) or
             (action == Actions.Sell.value and self._position == Positions.Long)):
