@@ -35,13 +35,15 @@ class StocksEnv(TradingEnv):
             current_price = self.prices[self._current_tick]
             last_trade_price = self.prices[self._last_trade_tick] * (1 + np.random.uniform(low=-0.0005, high=0.0005))
             price_diff = current_price - last_trade_price
-            step_reward += price_diff
+            pct_change = price_diff / last_trade_price
+            step_reward += pct_change
 
         if action == Actions.Sell.value and self._position == Positions.Short:
             current_price = self.prices[self._current_tick]
             last_trade_price = self.prices[self._last_trade_tick] * (1 + np.random.uniform(low=-0.0005, high=0.0005))
             price_diff = current_price - last_trade_price
-            step_reward -= price_diff        
+            pct_change = price_diff / last_trade_price
+            step_reward -= pct_change  
 
         if ((action == Actions.Buy.value and self._position == Positions.Short) or
             (action == Actions.Sell.value and self._position == Positions.Long)):
@@ -51,11 +53,13 @@ class StocksEnv(TradingEnv):
             current_price = self.prices[self._current_tick]
             last_trade_price = self.prices[self._last_trade_tick] * (1 + np.random.uniform(low=-0.0005, high=0.0005))
             price_diff = current_price - last_trade_price
+            pct_change = price_diff / last_trade_price
+
 
             if self._position == Positions.Long:
-                step_reward += price_diff
+                step_reward += pct_change
             if self._position == Positions.Short:
-                step_reward -= price_diff
+                step_reward -= pct_change
         return step_reward
 
 
