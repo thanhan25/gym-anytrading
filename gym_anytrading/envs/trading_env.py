@@ -62,7 +62,7 @@ class TradingEnv(gym.Env):
         self._position = Positions.Short
         self._position_history = (self.window_size * [None]) + [self._position]
         self._total_reward = 0
-        self._total_profit = 1000  # unit
+        self._total_profit = 1  # unit
         self._first_rendering = True
         self.history = {}
         return self._get_observation()
