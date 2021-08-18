@@ -76,7 +76,7 @@ class TradingEnv(gym.Env):
             self._done = True
 
         step_reward = self._calculate_reward(action)
-        self._total_reward += step_reward
+        
 
         self._update_profit(action)
 
@@ -88,6 +88,7 @@ class TradingEnv(gym.Env):
         if trade:
             self._position = self._position.opposite()
             self._last_trade_tick = self._current_tick 
+            self._total_reward += step_reward
 
         self._position_history.append(self._position)
         observation = self._get_observation()
